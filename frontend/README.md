@@ -1,16 +1,59 @@
-# React + Vite
+# Frontend - Birthday Reminder UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React SPA for authentication, birthdays CRUD, stats, and password-reset by code. Live demo: https://birth-day-reminder-app-frontend.onrender.com (emails will not be delivered on the demo because SMTP is blocked on the free tier; test email flows locally).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React, Vite
+- React Router
+- Tailwind CSS
+- Axios
+- React Hot Toast
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+cd frontend
+npm install
+```
 
-## Expanding the ESLint configuration
+Create `.env`:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+VITE_API_URL=http://localhost:4000
+```
+
+Run dev server:
+
+```
+npm run dev
+```
+
+Open http://localhost:5173.
+
+## App Flows
+
+- Auth: signup, login, logout
+- Email verification prompt and code entry
+- Forgot/reset password by code (enter email, receive code, set new password)
+- Birthdays: list, create, delete
+- Dashboard stats and upcoming birthdays view
+
+## Build
+
+```
+npm run build
+npm run preview
+```
+
+## Environment
+
+- `VITE_API_URL` points to the backend (default http://localhost:4000)
+
+## Notes
+
+- Hosted demo UI is fully functional, but emails (verification/reset) will not be sent from the demo due to Nodemailer SMTP restrictions on the free tier. Run locally with your SMTP creds to see email flows.
+
+## Owner / Project Creator
+
+- Gutu Jirata Imana

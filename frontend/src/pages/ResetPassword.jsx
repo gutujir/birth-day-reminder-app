@@ -1,13 +1,32 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { resetPassword } from "../api/auth";
 import AuthNav from "../components/AuthNav";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", code: "", newPassword: "" });
+  const location = useLocation();
+  const presetEmail = location.state?.email || "";
+  const presetNotice = location.state?.notice;
+  const [form, setForm] = useState({
+    email: presetEmail,
+    code: "",
+    newPassword: "",
+  });
   const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (presetEmail) {
+      setForm((prev) => ({ ...prev, email: presetEmail }));
+      setStatus({
+        type: "success",
+        message:
+          presetNotice ||
+          "Reset code sent. Enter the code with your new password.",
+      });
+    }
+  }, [presetEmail, presetNotice]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

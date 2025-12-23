@@ -23,7 +23,7 @@ const buildTransporter = () => {
   });
 };
 
-const transporter = buildTransporter();
+export const transporter = buildTransporter();
 
 export const sendEmail = async ({ to, subject, html }) => {
   const info = await transporter.sendMail({

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { forgotPassword } from "../api/auth";
 import AuthNav from "../components/AuthNav";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState({ type: "", message: "" });
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,13 @@ const ForgotPassword = () => {
     try {
       await forgotPassword({ email });
       setStatus({ type: "success", message: "Reset code sent to your email." });
+      navigate("/reset", {
+        replace: true,
+        state: {
+          email,
+          notice: "Reset code sent. Enter it below to set a new password.",
+        },
+      });
     } catch (error) {
       setStatus({ type: "error", message: error.message });
     } finally {

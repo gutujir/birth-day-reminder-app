@@ -1,13 +1,13 @@
 import app from "./app.js";
 import { connectDB } from "./config/connectDB.js";
-import { scheduleBirthdayCron } from "./jobs/birthdayCron.js";
+import { startBirthdayCron } from "./jobs/birthdayCron.js";
 
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {
   try {
     await connectDB();
-    scheduleBirthdayCron();
+    startBirthdayCron();
     app.listen(PORT, () => {
       console.log("Server is running on port: ", PORT);
     });

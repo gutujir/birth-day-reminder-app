@@ -1,188 +1,97 @@
 # Birthday Reminder App
 
-Automated birthday reminder system that sends personalized birthday wishes via email at 7 AM daily.
+Automated birthday reminder platform with authenticated dashboards, daily cron emails, and a modern React UI. The deployed demo is live at https://birth-day-reminder-app-frontend.onrender.com. Note: email sending is disabled on the deployed demo because Nodemailer’s free tier SMTP is blocked for outbound mail in that environment; local runs with your own SMTP work normally.
 
 ## Features
 
-- 🎂 Collect birthdays (name, email, date of birth)
-- ⏰ Automated daily cron job at 7 AM
-- ✉️ Beautiful HTML email templates
-- 🔐 Full authentication system
-- 📊 Dashboard with statistics
-- 🎨 Modern, responsive UI
+- Collect and manage birthdays (name, email, DOB)
+- Automated 7 AM cron job to send scheduled birthday emails
+- Email templates for verification, reset, and birthday wishes
+- Auth: signup/login, email verification, password reset by code
+- Dashboard, stats, upcoming birthdays view, protected routes
+- Responsive React + Tailwind UI
 
 ## Tech Stack
 
-### Backend
-
-- Node.js + Express
-- MongoDB + Mongoose
-- Nodemailer (Gmail SMTP)
-- Cron jobs
-- JWT authentication
-
-### Frontend
-
-- React + Vite
-- Tailwind CSS
-- React Router
-- Axios
-- React Hot Toast
-
-## Setup Instructions
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- MongoDB (local or Atlas)
-- Gmail account with App Password
-
-### Backend Setup
-
-1. Navigate to backend directory:
-
-```bash
-cd backend
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Create `.env` file:
-
-```env
-MONGO_URI=mongodb://localhost:27017/birth-day-reminder-app
-PORT=4000
-JWT_SECRET=your-secret-key-here
-
-# Gmail SMTP Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your-email@gmail.com
-SMTP_PASS=your-16-digit-app-password
-FROM_EMAIL=your-email@gmail.com
-
-# Optional
-CLIENT_URL=http://localhost:5173
-```
-
-4. Start the server:
-
-```bash
-npm run dev
-```
-
-### Frontend Setup
-
-1. Navigate to frontend directory:
-
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Create `.env` file:
-
-```env
-VITE_API_URL=http://localhost:4000
-```
-
-4. Start the development server:
-
-```bash
-npm run dev
-```
-
-### Gmail App Password Setup
-
-1. Go to your Google Account
-2. Enable 2-Factor Authentication
-3. Go to Security → App passwords
-4. Generate a new app password for "Mail"
-5. Copy the 16-digit password to `SMTP_PASS` in backend `.env`
-
-## Usage
-
-1. Visit `http://localhost:5173`
-2. Sign up for an account
-3. Navigate to Birthdays page
-4. Add birthdays (name, email, date of birth)
-5. The cron job will automatically send birthday wishes at 7 AM daily
+- Frontend: React, Vite, React Router, Tailwind CSS, Axios, React Hot Toast
+- Backend: Node.js, Express, MongoDB with Mongoose, Nodemailer, cron, JWT
+- DevOps: Dockerfiles per app; Render used for the demo frontend
 
 ## Project Structure
 
 ```
-├── backend/
-│   ├── src/
-│   │   ├── config/          # Database configuration
-│   │   ├── controllers/     # Request handlers
-│   │   ├── emails/          # Email templates
-│   │   ├── jobs/            # Cron jobs
-│   │   ├── middlewares/     # Validation, auth
-│   │   ├── models/          # MongoDB schemas
-│   │   └── routes/          # API routes
-│   └── package.json
-│
-├── frontend/
-│   ├── src/
-│   │   ├── api/             # API client
-│   │   ├── components/      # React components
-│   │   ├── context/         # React context
-│   │   └── pages/           # Page components
-│   └── package.json
-│
-└── README.md
+├── backend/           Express API, cron, email, Mongo
+└── frontend/          React SPA with auth flows and dashboards
 ```
 
-## API Endpoints
+## Live Demo Walkthrough
 
-### Authentication
+1. Open https://birth-day-reminder-app-frontend.onrender.com
+2. Signup and log in; browse dashboard and birthdays
+3. Password reset flow works for code capture UI, but emails will not arrive on the hosted demo (SMTP blocked on free tier). Test email flows locally to see messages.
 
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/login` - Login
-- `POST /api/auth/logout` - Logout
-- `POST /api/auth/verify-email` - Verify email
-- `POST /api/auth/forgot-password` - Request password reset
-- `POST /api/auth/reset-password-by-code` - Reset password
-- `GET /api/auth/check-auth` - Check authentication status
+## Run Locally (Quick Start)
 
-### Birthdays
+1. Clone and install
 
-- `GET /api/birthdays` - List all birthdays
-- `POST /api/birthdays` - Add new birthday
-- `DELETE /api/birthdays/:id` - Delete birthday
-- `GET /api/birthdays/statistics` - Get statistics
-- `GET /api/birthdays/upcoming` - Get upcoming birthdays
+```
+git clone https://github.com/gutujir/birth-day-reminder-app.git
+cd birth-day-remider-app
+```
+
+2. Backend
+
+```
+cd backend
+npm install
+cp .env   # create and fill if .env not present, see vars below
+npm run dev
+```
+
+3. Frontend (in a new terminal)
+
+```
+cd frontend
+npm install
+cp .env.example .env   # or create manually; see vars below
+npm run dev
+```
+
+4. Open http://localhost:5173 and sign up; API runs at http://localhost:4000 by default.
 
 ## Environment Variables
 
-### Backend
+Backend (.env)
 
-- `MONGO_URI` - MongoDB connection string
-- `PORT` - Server port (default: 4000)
-- `JWT_SECRET` - Secret for JWT tokens
-- `SMTP_HOST` - SMTP server host
-- `SMTP_PORT` - SMTP server port
-- `SMTP_USER` - Gmail email address
-- `SMTP_PASS` - Gmail app password
-- `FROM_EMAIL` - Sender email address
+- MONGO_URI=your mongo db connection string
+- PORT=4000
+- JWT_SECRET=your-secret
+- SMTP_HOST=smtp.gmail.com
+- SMTP_PORT=587
+- SMTP_USER=your-email@gmail.com
+- SMTP_PASS=your-16-digit-app-password
+- FROM_EMAIL=your-email@gmail.com
+- CLIENT_URL=http://localhost:5173
 
-### Frontend
+Frontend (.env)
 
-- `VITE_API_URL` - Backend API URL
+- VITE_API_URL=http://localhost:4000
 
-## License
+## Key Workflows
 
-MIT
+- Email verification: user receives a code; verify via `/api/auth/verify-email`
+- Password reset: request code via `/api/auth/forgot-password`, reset via `/api/auth/reset-password-by-code`
+- Birthday emails: cron job triggers daily at 7 AM server time
 
-## Author
+## API Surface (summary)
 
-Built for AltSchool Africa
+- Auth: signup, login, logout, verify email, resend verification, forgot-password, reset-password-by-code, check-auth
+- Birthdays: list, create, delete, stats, upcoming
+
+## Notes
+
+- Hosted demo cannot send emails due to Nodemailer SMTP restrictions on the free tier; run locally with your SMTP settings to test email delivery.
+
+## Owner / Project Creator
+
+- Gutu Jirata Imana

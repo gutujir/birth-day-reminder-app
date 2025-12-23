@@ -1,27 +1,7 @@
 import { CronJob } from "cron";
-import nodemailer from "nodemailer";
 import { Birthday } from "../models/birthday.model.js";
 import { birthdayWishesTemplate } from "../emails/emailTemplates.js";
-
-const createTransporter = () => {
-  const host = process.env.SMTP_HOST || "smtp.gmail.com";
-  const port = Number(process.env.SMTP_PORT || 587);
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-
-  if (!user || !pass) {
-    throw new Error(
-      "SMTP credentials are missing. Set SMTP_USER and SMTP_PASS."
-    );
-  }
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-  });
-};
+import { transporter } from "../config/nodemailer.js";
 
 const findTodayBirthdays = async () => {
   const today = new Date();
@@ -38,42 +18,50 @@ const findTodayBirthdays = async () => {
   });
 };
 
-const sendBirthdayEmail = async (transporter, person) => {
-  const from = process.env.FROM_EMAIL || process.env.SMTP_USER;
-  await transporter.sendMail({
-    from,
-    to: person.email,
-    subject: "Happy Birthday!",
-    html: birthdayWishesTemplate(person.name),
-  });
+const sendBirthdayEmails = async () => {
+  try {
+    console.log("Running birthday cron job...");
+    const peopleWithBirthdaysToday = await findTodayBirthdays();
+
+    if (peopleWithBirthdaysToday.length === 0) {
+      console.log("No birthdays today.");
+      return;
+    }
+
+    console.log(`Found ${peopleWithBirthdaysToday.length} birthday(s) today.`);
+
+    for (const person of peopleWithBirthdaysToday) {
+      const mailOptions = {
+        from: process.env.FROM_EMAIL || process.env.SMTP_USER,
+        to: person.email,
+        subject: `🎉 Happy Birthday, ${person.name}!`,
+        html: birthdayWishesTemplate(person.name),
+      };
+
+      try {
+        await transporter.sendMail(mailOptions);
+        console.log(`Birthday email sent to ${person.name} (${person.email})`);
+      } catch (err) {
+        console.error(
+          `Failed to send birthday email to ${person.email}:`,
+          err.message
+        );
+      }
+    }
+  } catch (error) {
+    console.error("Error in birthday cron job:", error);
+  }
 };
 
-export const scheduleBirthdayCron = () => {
+export const startBirthdayCron = () => {
   const job = new CronJob(
-    "0 7 * * *",
-    async () => {
-      try {
-        const transporter = createTransporter();
-        const celebrants = await findTodayBirthdays();
-
-        for (const person of celebrants) {
-          await sendBirthdayEmail(transporter, person);
-        }
-
-        if (celebrants.length) {
-          console.log(
-            `Sent birthday emails to ${celebrants.length} recipient(s).`
-          );
-        }
-      } catch (error) {
-        console.error("Birthday cron failed", error.message);
-      }
-    },
+    "0 7 * * *", // Every day at 7 AM
+    sendBirthdayEmails,
     null,
     true,
-    process.env.CRON_TZ || undefined // Optional timezone
+    process.env.CRON_TZ || undefined
   );
 
-  job.start();
+  console.log("Birthday cron job scheduled to run daily at 7 AM");
   return job;
 };
